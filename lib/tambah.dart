@@ -1,26 +1,26 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:group_radio_button/group_radio_button.dart';
-import 'package:second_project/models/api.dart';
+import 'package:biodata_project/models/api.dart';
 import 'package:http/http.dart' as http;
+import 'package:google_fonts/google_fonts.dart'; // Added Google Fonts
 
-
-class FormTambah extends StatefulWidget{
+class FormTambah extends StatefulWidget {
   const FormTambah({super.key});
+
   @override
   State<StatefulWidget> createState() => FormTambahState();
-
 }
-class FormTambahState extends State<FormTambah>{
+
+class FormTambahState extends State<FormTambah> {
   final formkey = GlobalKey<FormState>();
-  TextEditingController nameController = new TextEditingController();
-  TextEditingController birthController = new TextEditingController();
-  TextEditingController religionController = new TextEditingController();
-  TextEditingController addressController = new TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController birthController = TextEditingController();
+  TextEditingController religionController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
 
   String _genderWarga = "";
-  final _status = ["pria", "wanita"];
+  final _status = ["Pria", "Wanita"];
 
   final List<String> items = [
     'Islam',
@@ -41,106 +41,83 @@ class FormTambahState extends State<FormTambah>{
         'birth': birthController.text,
         'religion': selectedValue ?? 'Tidak Dipilih',
         'address': addressController.text,
-      }
+      },
     );
   }
 
   void _onConfirm(context) async {
     http.Response response = await createSw();
     final data = json.decode(response.body);
-    if(data['success']) {
+    if (data['success']) {
       Navigator.of(context)
           .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
     }
   }
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         title: Text(
           "Tambah Data Siswa",
-          style: TextStyle(
+          style: GoogleFonts.poppins(
             color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 22,
           ),
         ),
-          centerTitle: true,
-          backgroundColor: Colors.blueAccent,
-          elevation: 4.0,
+        centerTitle: true,
+        backgroundColor: Colors.indigoAccent, // Modern color for the AppBar
+        elevation: 2.0,
       ),
-      body: Container(
-        child: Column(
-          children: [
-            _textboxName(),
-            _textboxGender(),
-            _textboxBirth(),
-            _textboxReligion(),
-            _textboxAddress(),
-            const SizedBox(height: 20.0), // Memberikan jarak antara input form dan tombol
-            _tombolSimpan(),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0), // Better padding for mobile
+          child: Form(
+            key: formkey,
+            child: Column(
+              children: [
+                _textboxName(),
+                _textboxGender(),
+                _textboxBirth(),
+                _textboxReligion(),
+                _textboxAddress(),
+                const SizedBox(height: 30.0), // Give space between the form and button
+                _tombolSimpan(),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
+
   _textboxName() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white, // Warna latar belakang
-        borderRadius: BorderRadius.circular(10.0), // Membuat sudut melengkung
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5), // Warna shadow
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(0, 3), // Posisi shadow
-          ),
-        ],
-      ),
-      child: TextField(
-        decoration: const InputDecoration(
-          labelText: "Student Name",
-          prefixIcon: Icon(Icons.person), // Menambahkan ikon di dalam input form
-          border: InputBorder.none, // Menghilangkan border default
-          contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0), // Mengatur padding
-        ),
-        controller: nameController,
-      ),
+    return _buildTextField(
+      controller: nameController,
+      label: "Student Name",
+      icon: Icons.person,
     );
   }
 
   _textboxGender() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 10.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+      decoration: _boxDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.wc),
-              SizedBox(width: 10.0),
+              Icon(Icons.wc, color: Colors.indigoAccent),
+              const SizedBox(width: 10.0),
               Text(
                 "Student Gender",
-                style: TextStyle(
+                style: GoogleFonts.poppins(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: Colors.black87,
                 ),
               ),
             ],
@@ -156,45 +133,31 @@ class FormTambahState extends State<FormTambah>{
               item,
               textPosition: RadioButtonTextPosition.right,
             ),
-            activeColor: Colors.purple,
-            fillColor: Colors.purple,
+            activeColor: Colors.indigoAccent,
+            fillColor: Colors.indigoAccent,
           ),
         ],
       ),
     );
   }
 
-
   _textboxReligion() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(0, 3), // Posisi shadow
-          ),
-        ],
-      ),
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+      decoration: _boxDecoration(),
       child: DropdownButtonFormField<String>(
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           labelText: 'Student Religion',
-          prefixIcon: Icon(Icons.mosque), // Ikon di dalam input form
-          border: InputBorder.none, // Menghilangkan border default
-          contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0), // Mengatur padding
+          labelStyle: GoogleFonts.poppins(fontSize: 16, color: Colors.grey),
+          prefixIcon: Icon(Icons.mosque, color: Colors.indigoAccent),
+          border: InputBorder.none,
         ),
-        isExpanded: true, // Membuat dropdown sesuai lebar container
+        isExpanded: true,
         items: items
             .map((String item) => DropdownMenuItem<String>(
           value: item,
-          child: Text(
-            item,
-            style: const TextStyle(fontSize: 14),
-          ),
+          child: Text(item, style: GoogleFonts.poppins(fontSize: 14)),
         ))
             .toList(),
         value: selectedValue,
@@ -208,71 +171,73 @@ class FormTambahState extends State<FormTambah>{
   }
 
   _textboxBirth() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 8.0),
-      decoration: BoxDecoration(
-        color: Colors.white, // Warna latar belakang
-        borderRadius: BorderRadius.circular(10.0), // Membuat sudut melengkung
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5), // Warna shadow
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(0, 3), // Posisi shadow
-          ),
-        ],
-      ),
-      child: TextField(
-        controller: birthController, // Controller untuk tanggal lahir
-        decoration: const InputDecoration(
-          labelText: "Student Birthday",
-          prefixIcon: Icon(Icons.cake), // Ikon kalender di dalam input form
-          border: InputBorder.none, // Menghilangkan border default
-          contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0), // Mengatur padding
-        ),
-        readOnly: true,
-        onTap: () async {
-          DateTime? pickedDate = await showDatePicker(
-            context: context,
-            initialDate: DateTime.now(),
-            firstDate: DateTime(1900),
-            lastDate: DateTime(2100),
-          );
+    return _buildTextField(
+      controller: birthController,
+      label: "Student Birthday",
+      icon: Icons.cake,
+      readOnly: true,
+      onTap: () async {
+        DateTime? pickedDate = await showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime(1900),
+          lastDate: DateTime(2100),
+        );
 
-          if (pickedDate != null) {
-            setState(() {
-              birthController.text = "${pickedDate.toLocal()}".split(' ')[0];
-            });
-          }
-        },
-      ),
+        if (pickedDate != null) {
+          setState(() {
+            birthController.text = "${pickedDate.toLocal()}".split(' ')[0];
+          });
+        }
+      },
     );
   }
 
   _textboxAddress() {
+    return _buildTextField(
+      controller: addressController,
+      label: "Student Address",
+      icon: Icons.add_home,
+    );
+  }
+
+  _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    bool readOnly = false,
+    VoidCallback? onTap,
+  }) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white, // Warna latar belakang
-        borderRadius: BorderRadius.circular(10.0), // Membuat sudut melengkung
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5), // Warna shadow
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(0, 3), // Posisi shadow
-          ),
-        ],
-      ),
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+      decoration: _boxDecoration(),
       child: TextField(
-        decoration: const InputDecoration(
-          labelText: "Student Address",
-          prefixIcon: Icon(Icons.add_home), // Menambahkan ikon di dalam input form
-          border: InputBorder.none, // Menghilangkan border default
-          contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0), // Mengatur padding
+        controller: controller,
+        readOnly: readOnly,
+        onTap: onTap,
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: GoogleFonts.poppins(fontSize: 16, color: Colors.grey),
+          prefixIcon: Icon(icon, color: Colors.indigoAccent),
+          border: InputBorder.none,
         ),
-        controller: addressController,
       ),
+    );
+  }
+
+  _boxDecoration() {
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(15.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withOpacity(0.3),
+          spreadRadius: 2,
+          blurRadius: 5,
+          offset: const Offset(0, 3),
+        ),
+      ],
     );
   }
 
@@ -282,17 +247,18 @@ class FormTambahState extends State<FormTambah>{
         _onConfirm(context);
       },
       style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.white, backgroundColor: Colors.purple, // Warna teks
+        padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 30.0),
+        backgroundColor: Colors.indigoAccent,
+        foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0), // Membuat sudut tombol melengkung
+          borderRadius: BorderRadius.circular(10.0),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 30.0), // Padding di dalam tombol
-        elevation: 5.0, // Efek shadow di bawah tombol
-        shadowColor: Colors.grey.withOpacity(0.5), // Warna shadow
+        elevation: 5.0,
+        shadowColor: Colors.grey.withOpacity(0.5),
       ),
-      child: const Text(
+      child: Text(
         'Submit',
-        style: TextStyle(
+        style: GoogleFonts.poppins(
           fontSize: 16.0,
           fontWeight: FontWeight.bold,
         ),

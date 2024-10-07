@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:second_project/ui/form_page.dart';
+import 'package:biodata_project/ui/form_page.dart';
 
 import 'home.dart';
-
 void main() {
   runApp(const MyApp());
 }

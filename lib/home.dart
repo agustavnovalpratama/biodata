@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:second_project/tambah.dart';
-import 'package:second_project/models/msiswa.dart';
-import 'package:second_project/models/api.dart';
+import 'package:google_fonts/google_fonts.dart'; // Added Google Fonts for modern typography
+import 'package:biodata_project/tambah.dart';
+import 'package:biodata_project/models/msiswa.dart';
+import 'package:biodata_project/models/api.dart';
 import 'package:http/http.dart' as http;
 
 import 'dart:convert';
@@ -13,14 +14,15 @@ import 'detail.dart';
 class Home extends StatefulWidget {
   @override
   Home({Key? key}) : super(key: key);
+
+  @override
   State<StatefulWidget> createState() {
-    return HomeState();
+    return _HomeState();
   }
 }
 
-class HomeState extends State<Home> {
+class _HomeState extends State<Home> {
   late Future<List<SiswaModel>> sw;
-
 
   @override
   void initState() {
@@ -43,56 +45,70 @@ class HomeState extends State<Home> {
       appBar: AppBar(
         title: Text(
           "List Data Siswa",
-          style: TextStyle(
+          style: GoogleFonts.poppins( // Modern font style
             color: Colors.white,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
             fontSize: 22,
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.blueAccent,
-        elevation: 4.0, // Adds shadow to the AppBar
+        backgroundColor: Colors.indigo, // Changed AppBar color for a more modern look
+        elevation: 2.0,
       ),
       body: Container(
-        color: Colors.grey[200], // Light background color
+        color: Colors.grey[100], // Light background for better contrast
         child: FutureBuilder<List<SiswaModel>>(
           future: sw,
           builder: (BuildContext context, AsyncSnapshot<List<SiswaModel>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator()); // Loading indicator
+              return Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}')); // Show error message
+              return Center(child: Text('Error: ${snapshot.error}'));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('No data found')); // Handle empty data
+              return Center(child: Text('No data found'));
             }
 
-            return ListView.separated(
+            return ListView.builder(
+              padding: EdgeInsets.all(12), // Added padding for better layout
               itemCount: snapshot.data!.length,
-              separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey[300]), // Adds dividers
               itemBuilder: (BuildContext context, int index) {
                 var data = snapshot.data![index];
-                return Card(
-                  elevation: 5, // Adds shadow to the card
-                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10), // Rounded corners
-                  ),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.blueAccent,
-                      child: Icon(Icons.person, color: Colors.white),
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => Detail(sw: data)));
+                  },
+                  child: Card(
+                    elevation: 4, // Softer shadow
+                    margin: EdgeInsets.symmetric(vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15), // Smooth rounded corners
                     ),
-                    title: Text(
-                      data.name,
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    child: ListTile(
+                      contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 16), // More padding for better touch area
+                      leading: Hero( // Added hero animation for the avatar
+                        tag: data.name,
+                        child: CircleAvatar(
+                          radius: 28,
+                          backgroundColor: Colors.indigoAccent,
+                          child: Icon(Icons.person, color: Colors.white, size: 30),
+                        ),
+                      ),
+                      title: Text(
+                        data.name,
+                        style: GoogleFonts.poppins( // Custom font for title
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      subtitle: Text(
+                        "${data.religion}, ${data.birth}",
+                        style: TextStyle(
+                          color: Colors.grey[700],
+                          fontSize: 14,
+                        ),
+                      ),
                     ),
-                    subtitle: Text(
-                      "${data.religion}, ${data.birth}",
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => Detail(sw: data)));
-                    },
                   ),
                 );
               },
@@ -101,12 +117,12 @@ class HomeState extends State<Home> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.deepOrange,
-        hoverColor: Colors.green,
+        backgroundColor: Colors.indigoAccent,
+        hoverColor: Colors.purpleAccent,
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) => FormTambah()));
         },
-        child: const Icon(Icons.add, color: Colors.white,),
+        child: Icon(Icons.add, color: Colors.white),
       ),
     );
   }

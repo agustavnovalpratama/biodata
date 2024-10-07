@@ -1,15 +1,14 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:second_project/models/api.dart';
-import 'package:second_project/models/msiswa.dart';
+import 'package:biodata_project/models/api.dart';
+import 'package:biodata_project/models/msiswa.dart';
 import 'package:http/http.dart' as http;
 
 import 'form.dart';
 
-
-class Edit extends StatefulWidget{
+class Edit extends StatefulWidget {
   final SiswaModel sw;
 
   Edit({required this.sw});
@@ -17,48 +16,48 @@ class Edit extends StatefulWidget{
   @override
   State<StatefulWidget> createState() => EditState();
 }
-class EditState extends State<Edit>{
+
+class EditState extends State<Edit> {
   final formkey = GlobalKey<FormState>();
 
   late TextEditingController nameController, birthController, religionController, genderController, addressController;
 
   Future editSw() async {
     return await http.post(
-      Uri.parse(BaseUrl.edit),
-      body: {
-        "id": widget.sw.id.toString(),
-        "name": nameController.text,
-        "birth": birthController.text,
-        "religion": religionController.text,
-        "gender": genderController.text,
-        "address": addressController.text
-      }
+        Uri.parse(BaseUrl.edit),
+        body: {
+          "id": widget.sw.id.toString(),
+          "name": nameController.text,
+          "birth": birthController.text,
+          "religion": religionController.text,
+          "gender": genderController.text,
+          "address": addressController.text
+        }
     );
   }
 
-  pesan() {
+  void _showToast() {
     Fluttertoast.showToast(
-        msg: "Perubahan data berhasil",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0
+      msg: "Data updated successfully",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.green,
+      textColor: Colors.white,
+      fontSize: 16.0,
     );
   }
 
   void _onConfirm(context) async {
     http.Response response = await editSw();
     final data = json.decode(response.body);
-    if(data['success']) {
-      pesan();
+    if (data['success']) {
+      _showToast();
       Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
     }
   }
 
   @override
-
   void initState() {
     nameController = TextEditingController(text: widget.sw.name);
     birthController = TextEditingController(text: widget.sw.birth);
@@ -70,12 +69,11 @@ class EditState extends State<Edit>{
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Edit Siswa",
-          style: TextStyle(
+          "Edit Student",
+          style: GoogleFonts.poppins(
             color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 22,
@@ -87,32 +85,45 @@ class EditState extends State<Edit>{
       ),
       bottomNavigationBar: BottomAppBar(
         child: ElevatedButton(
-          child: Text("Update"),
+          child: Text(
+            "Update",
+            style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 24),
+          ),
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white,
             backgroundColor: Colors.orange,
-            textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)
+            padding: EdgeInsets.symmetric(vertical: 15),
           ),
           onPressed: () {
             _onConfirm(context);
           },
-        )
-      ),  
-      body: Container(
-        height: double.infinity,
+        ),
+      ),
+      body: SingleChildScrollView(
         padding: EdgeInsets.all(20),
-        child: Center(
-          child: AppForm(
-            formkey: formkey,
-            nameController: nameController,
-            birthController: birthController,
-            religionController: religionController,
-            addressController: addressController,
-            genderController: genderController,
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Update Student Information",
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.blueAccent,
+              ),
+            ),
+            SizedBox(height: 20),
+            AppForm(
+              formkey: formkey,
+              nameController: nameController,
+              birthController: birthController,
+              religionController: religionController,
+              addressController: addressController,
+              genderController: genderController,
+            ),
+          ],
         ),
       ),
     );
   }
-  
 }
